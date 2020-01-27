@@ -1,25 +1,17 @@
 import socketIo from 'socket.io'
 import { Server } from 'http'
+import ChatSocket from './chat.socket'
 
 class SocketServer {
 	private io: SocketIO.Server
 
 	constructor(server: Server) {
 		this.io = socketIo(server)
-		this.listen()
+		this.createListeners()
 	}
 
-	private listen(): void {
-		this.io.of('/default').on('connect', (socket: socketIo.Socket) => {
-			socket.on('message', (m: string) => {
-				console.log('[server](message): %s', m)
-				socket.emit('welcome', { message: 'welcome', id: socket.id })
-			})
-
-			socket.on('disconnect', () => {
-				console.log('Client disconnected')
-			})
-		})
+	private createListeners(): void {
+		new ChatSocket(this.io)
 	}
 
 	public getIo(): SocketIO.Server {
