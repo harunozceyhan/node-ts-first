@@ -1,12 +1,11 @@
 import * as express from 'express'
-import { Server } from 'socket.io'
 import { Request, Response } from 'express'
 import IControllerBase from '../interfaces/IControllerBase.interface'
+import ChatSocket from '../socket/chat.socket'
 
 class HomeController implements IControllerBase {
-	private path = '/'
 	private router = express.Router()
-	private io: Server
+	private chatSocket: ChatSocket
 
 	constructor() {
 		this.initRoutes()
@@ -16,15 +15,12 @@ class HomeController implements IControllerBase {
 		this.router.get('/', this.index)
 	}
 
-	public setSocketServer(io: Server) {
-		this.io = io
+	public setSocketServer(chatSocket: ChatSocket) {
+		this.chatSocket = chatSocket
 	}
 
 	index = (req: Request, res: Response) => {
-		this.io.of('/default').clients((error: any, clients: string[]) => {
-			if (error) throw error
-			res.send(clients)
-		})
+		res.send(this.chatSocket.getUserSocketList())
 	}
 }
 

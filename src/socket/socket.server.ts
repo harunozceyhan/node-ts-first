@@ -4,6 +4,7 @@ import ChatSocket from './chat.socket'
 
 class SocketServer {
 	private io: SocketIO.Server
+	private chatSocket: ChatSocket
 
 	constructor(server: Server) {
 		this.io = socketIo(server)
@@ -11,11 +12,15 @@ class SocketServer {
 	}
 
 	private createListeners(): void {
-		new ChatSocket(this.io)
+		this.chatSocket = new ChatSocket(this.io)
 	}
 
 	public getIo(): SocketIO.Server {
 		return this.io
+	}
+
+	public getChatSocket(): ChatSocket {
+		return this.chatSocket
 	}
 }
 

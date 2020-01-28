@@ -29,6 +29,10 @@ class ChatSocket {
 			})
 		})
 	}
+
+	public getUserSocketList(): Array<UserSocket> {
+		return this.userSocketList
+	}
 }
 
 export default ChatSocket

@@ -15,4 +15,4 @@ const app = new App({
 })
 const server = app.listen()
 const socketServer = new SocketServer(server)
-homeController.setSocketServer(socketServer.getIo())
+homeController.setSocketServer(socketServer.getChatSocket())
