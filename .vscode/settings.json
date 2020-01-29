@@ -1,3 +1,4 @@
 {
-	"eslint.validate": ["typescript"]
+	"eslint.validate": ["typescript"],
+	"prettier.printWidth": 9999
 }

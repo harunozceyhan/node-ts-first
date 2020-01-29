@@ -1,12 +1,11 @@
 import { Model } from 'objection'
 
-class Lesson extends Model {
+class Room extends Model {
 	id!: string
-	code!: string
-	name!: string
+	participants!: object
 
 	static get tableName(): string {
-		return 'postgres.lesson'
+		return 'postgres.room'
 	}
 
 	static get idColumn(): string {
@@ -14,4 +13,4 @@ class Lesson extends Model {
 	}
 }
 
-export default Lesson
+export default Room

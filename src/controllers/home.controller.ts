@@ -1,28 +1,28 @@
-import * as express from 'express'
+import express from 'express'
 import { Request, Response } from 'express'
 import IControllerBase from '../interfaces/IControllerBase.interface'
 import ChatSocket from '../socket/chat.socket'
-import Lesson from '../db/models/lesson.model'
-import Message from '../db/models/message.model'
-import uuid from 'uuid/v4'
-import { ref } from 'objection'
+import MessageService from '../services/message.service'
 
 class HomeController implements IControllerBase {
 	private router = express.Router()
 	private chatSocket: ChatSocket
+	private messageService: MessageService
 
 	constructor() {
 		this.initRoutes()
+		this.messageService = new MessageService()
 	}
 
-	public initRoutes() {
+	initRoutes = () => {
 		this.router.get('/', this.index)
-		this.router.get('/lessons', this.lessons)
+		this.router.get('/rooms', this.rooms)
 		this.router.get('/message', this.getMessages)
+		this.router.get('/roomMessages', this.getMessagesOfRoom)
 		this.router.get('/insert', this.insertMessage)
 	}
 
-	public setSocketServer(chatSocket: ChatSocket) {
+	setSocketServer = (chatSocket: ChatSocket) => {
 		this.chatSocket = chatSocket
 	}
 
@@ -30,30 +30,21 @@ class HomeController implements IControllerBase {
 		res.send(this.chatSocket.getUserSocketList())
 	}
 
-	lessons = async (req: Request, res: Response) => {
-		res.send(await Lesson.query().select('id', 'name'))
+	rooms = async (req: Request, res: Response) => {
+		const roomId = await this.messageService.createOrGetRoom(req.query.participant1, req.query.participant2)
+		res.send({ id: roomId })
 	}
 
 	getMessages = async (req: Request, res: Response) => {
-		const result = await Message.query()
-			.select()
-			.where(ref('message:sender').castText(), 'harunozceyhan')
+		res.send(await this.messageService.getMessages())
+	}
 
-		res.send(result)
+	getMessagesOfRoom = async (req: Request, res: Response) => {
+		res.send(await this.messageService.getMessagesOfRoom(req.query.roomId))
 	}
 
 	insertMessage = async (req: Request, res: Response) => {
-		const message = {
-			id: uuid(),
-			message: {
-				roomName: uuid(),
-				sender: req.query.name,
-				message: 'Hello',
-				date: Date.now()
-			}
-		}
-		await Message.query().insert(message)
-		res.send(await Message.query())
+		res.send(await this.messageService.createMessage(req.query.roomId, req.query.sender, req.query.content))
 	}
 }
 
