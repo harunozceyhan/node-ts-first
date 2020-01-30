@@ -40,11 +40,11 @@ class HomeController implements IControllerBase {
 	}
 
 	getMessagesOfRoom = async (req: Request, res: Response) => {
-		res.send(await this.messageService.getMessagesOfRoom(req.query.roomId))
+		res.send(await this.messageService.getMessagesOfRoom(req.query.user, req.query.roomId))
 	}
 
 	insertMessage = async (req: Request, res: Response) => {
-		res.send(await this.messageService.createMessage(req.query.roomId, req.query.sender, req.query.content))
+		res.send(await this.messageService.createMessage(req.query.roomId, req.query.sender, req.query.receiver, req.query.content))
 	}
 }
 
