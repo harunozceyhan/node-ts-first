@@ -1,12 +1,10 @@
 import express from 'express'
 import { Request, Response } from 'express'
 import IControllerBase from '../interfaces/IControllerBase.interface'
-import ChatSocket from '../socket/chat.socket'
 import MessageService from '../services/message.service'
 
 class HomeController implements IControllerBase {
 	private router = express.Router()
-	private chatSocket: ChatSocket
 	private messageService: MessageService
 
 	constructor() {
@@ -22,12 +20,8 @@ class HomeController implements IControllerBase {
 		this.router.get('/insert', this.insertMessage)
 	}
 
-	setSocketServer = (chatSocket: ChatSocket) => {
-		this.chatSocket = chatSocket
-	}
-
-	index = (req: Request, res: Response) => {
-		res.send(this.chatSocket.getUserSocketList())
+	index = async (req: Request, res: Response) => {
+		res.send(await this.messageService.getMessages())
 	}
 
 	rooms = async (req: Request, res: Response) => {
